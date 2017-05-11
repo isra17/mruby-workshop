@@ -1,8 +1,14 @@
 #!/bin/bash
 
 image_id=$(docker images mruby-workshop -q)
-if [ $image_id == "" ]; then
-  docker pull mruby-workshop:latest
+if [ "$image_id" == "" ]; then
+  image_id=$(docker images isra17/mruby-workshop -q)
+  if [ "$image_id" == "" ]; then
+    docker pull isra17/mruby-workshop
+  fi
+  repository="isra17/mruby-workshop"
+else
+repository="mruby-workshop"
 fi
 
 # No real path on OSX...
@@ -35,4 +41,4 @@ esac
 
 basename=$(basename $script)
 hostpath=$(realpath $script)
-docker run --rm -it -v "$hostpath:/tmp/$basename" mruby-workshop $command ${@:1:${#}-1} /tmp/$basename
+docker run --rm -it -v "$hostpath:/tmp/$basename" $repository $command ${@:1:${#}-1} /tmp/$basename
