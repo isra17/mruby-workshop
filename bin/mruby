@@ -2,7 +2,7 @@
 
 image_id=$(docker images mruby-workshop -q)
 if [ $image_id == "" ]; then
-  docker build -t mruby-workshop .
+  docker pull mruby-workshop:latest
 fi
 
 # No real path on OSX...
@@ -10,21 +10,29 @@ realpath() {
   perl -e 'use Cwd "abs_path"; print abs_path(@ARGV[0])' -- "$1"
 }
 
-if [ "$#" == "1" ]; then
-  if [ "$1" == "mirb" ]; then
-    docker run --rm -it mruby-workshop mirb
-  else
-    f=$(basename $1)
-    hostpath=$(realpath $1)
-    docker run --rm -it -v "$hostpath:/tmp/$f" mruby-workshop mruby /tmp/$f
-  fi
-else
-  if [ "$#" == "2" ]; then
-    f=$(basename $2)
-    hostpath=$(realpath $2)
-    docker run --rm -it -v "$hostpath:/tmp/$f" mruby-workshop $1 /tmp/$f
-  else
-    echo "USAGE: $0 [gdb|mruby|mirb] SCRIPT"
-  fi
+USAGE="Usage: $0 [mruby [-va]|mirb|gdb] SCRIPT"
+
+if [ "$#" == "0" ]; then
+	echo "$USAGE"
+	exit 1
 fi
 
+for script; do true; done
+
+command=$1
+case $command in
+  mirb)
+    docker run --rm -it mruby-workshop mirb
+    exit
+    ;;
+  gdb)
+    shift
+    ;;
+  *)
+    command="mruby"
+    ;;
+esac
+
+basename=$(basename $script)
+hostpath=$(realpath $script)
+docker run --rm -it -v "$hostpath:/tmp/$basename" mruby-workshop $command ${@:1:${#}-1} /tmp/$basename
