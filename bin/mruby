@@ -8,7 +8,7 @@ if [ "$image_id" == "" ]; then
   fi
   repository="isra17/mruby-workshop"
 else
-repository="mruby-workshop"
+  repository="mruby-workshop"
 fi
 
 # No real path on OSX...
@@ -28,7 +28,7 @@ for script; do true; done
 command=$1
 case $command in
   mirb)
-    docker run --rm -it mruby-workshop mirb
+    docker run --rm -it $repository mirb
     exit
     ;;
   gdb)
