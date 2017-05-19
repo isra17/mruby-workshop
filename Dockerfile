@@ -12,7 +12,9 @@ RUN apt-get update && apt-get install -y \
   && rm -rf /var/lib/apt/lists/*
 
 RUN git clone https://github.com/longld/peda.git ~/peda \
-  && echo "source ~/peda/peda.py" >> ~/.gdbinit
+  && echo "source ~/peda/peda.py" >> ~/.gdbinit \
+  && echo "set follow-fork-mode parent" >> ~/.gdbinit \
+  && echo "set disassembly-flavor intel" >> ~/.gdbinit
 
 
 COPY . src

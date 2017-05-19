@@ -25,6 +25,7 @@ fi
 
 for script; do true; done
 
+opts=""
 command=$1
 case $command in
   mirb)
@@ -33,6 +34,7 @@ case $command in
     ;;
   gdb)
     shift
+    opts="--privileged"
     ;;
   *)
     command="mruby"
@@ -41,4 +43,4 @@ esac
 
 basename=$(basename $script)
 hostpath=$(realpath $script)
-docker run --rm -it -v "$hostpath:/tmp/$basename" $repository $command ${@:1:${#}-1} /tmp/$basename
+docker run $opts --rm -it -v "$hostpath:/tmp/$basename" $repository $command ${@:1:${#}-1} /tmp/$basename
